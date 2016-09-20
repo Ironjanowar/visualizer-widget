@@ -1,55 +1,60 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600);
 
-body {
+  body {
     font-family: "Source Code Pro", Consolas, monaco, monospace;
     line-height: 160%;
     font-size: 16px;
     margin: 0;
-}
+    overflow: hidden;
+  }
 
-path.link {
+  path.link {
     fill: none;
     stroke-width: 2px;
-}
+  }
 
-.node:not(:hover) .nodetext {
+  .node:not(:hover) .nodetext {
     display: none;
-}
+  }
 
-h1 {
+  h1 {
     font-size: 36px;
     margin: 10px 0;
     text-transform: uppercase;
     font-weight: normal;
-}
+  }
 
-h2, h3 {
+  h2, h3 {
     font-size: 18px;
     margin: 5px 0;
     font-weight: normal;
-}
+  }
 
-header {
+  header {
     padding: 20px;
     position: absolute;
     top: 0;
     left: 0;
-}
+  }
 
-a:link {
+  a:link {
     color: #EE3124;
     text-decoration: none;
-}
+  }
 
-a:visited {
+  a:visited {
     color: #EE3124;
-}
+  }
 
-a:hover {
+  a:hover {
     color: #A4CD39;
     text-decoration: underline;
-}
+  }
 
-a:active {
+  a:active {
     color: #EE3124;
-}
+  }
+
+  .text {
+    visibility: hidden;
+  }

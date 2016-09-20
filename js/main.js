@@ -9,8 +9,15 @@ var dataSet = {
 //   - Defines the inputendpoint
 //   - Asigns normalizeJSON() to the inputendpoint
 function config() {
+    // When a JSON is received paint it
     MashupPlatform.wiring.registerCallback('inputJSON', init);
+
+    // When any preferences change repaint
     MashupPlatform.prefs.registerCallback(repaint);
+
+    // When there is a change in the wiring call init to repaint
+    MashupPlatform.wiring.registerStatusCallback(repaint.bind("web"));
+    init();
 };
 
 // Normalize and paint the JSON coming from the inputendpoint
@@ -69,18 +76,36 @@ function web_view() {
     // some colour variables
     var tcBlack = "#130C0E";
 
+    // Set visible the text
+    for (var elem of document.getElementsByClassName("text")) {
+        elem.style.visibility = "visible"
+    }
+
     // rest of vars
-    var w = MashupPlatform.widget.context.get('widthInPixels'),
-        h = MashupPlatform.widget.context.get('heightInPixels'),
-        maxNodeSize = 50,
+    var w, h;
+
+    if (MashupPlatform.widget.context.get('widthInPixels') !== 0 &&
+        MashupPlatform.widget.context.get('heightInPixels') !== 0) {
+        w = MashupPlatform.widget.context.get('widthInPixels');
+        h = MashupPlatform.widget.context.get('heightInPixels');
+    } else {
+        w = 999;
+        h = 433;
+    }
+
+    var maxNodeSize = 50,
         x_browser = 20,
         y_browser = 25,
         root;
 
-    var vis;
     var force = d3.layout.force();
 
-    vis = d3.select("#vis").append("svg").attr("width", w).attr("height", h).attr("id", "mySvg");
+    var vis = d3.select("#vis")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h)
+                .attr("id", "mySvg");
+
     var svg = document.getElementById("mySvg");
 
 
@@ -164,11 +189,13 @@ function web_view() {
         // make the image grow a little on mouse over and add the text details on click
         var setEvents = images
         // Append hero text
-            .on( 'click', function (d) {
-                d3.select("h1").html(d.last_name);
-                d3.select("h2").html(d.name);
-                d3.select("h3").html ("Take me to " + "<a href='" + d.link + "' >"  + d.last_name + " web page ⇢"+ "</a>" );
-            })
+
+	// Not used heather
+//            .on( 'click', function (d) {
+//                d3.select("h1").html(d.last_name);
+//                d3.select("h2").html(d.name);
+//                d3.select("h3").html ("Take me to " + "<a href='" + d.link + "' >"  + d.last_name + " web page ⇢"+ "</a>" );
+//            })
 
             .on( 'mouseenter', function() {
                 // select element in current context
@@ -188,6 +215,7 @@ function web_view() {
                   .attr("height", 50)
                   .attr("width", 50);
             });
+
 
         // Append hero name on roll over next to the node as well
         nodeEnter.append("text")
@@ -273,13 +301,13 @@ function web_view() {
         var toUpdate = false;
 
         if ('heightInPixels' in new_values && Math.abs(h - new_values.heightInPixels) > 10) {
-            h = new_values.heightInPixels;
+            h = MashupPlatform.widget.context.get('heightInPixels');
             svg.setAttribute("height", h);
             toUpdate = true;
         }
 
         if ('widthInPixels' in new_values && Math.abs(h - new_values.widthInPixels) > 10) {
-            w = new_values.widthInPixels;
+            w = MashupPlatform.widget.context.get('widthInPixels');
             svg.setAttribute("width", w);
             toUpdate = true;
         }
@@ -297,6 +325,12 @@ function web_view() {
 // TODO: Fix display
 function tree_view() {
     var treeData = dataSet;
+
+    // Set visible the text
+    for (var elem of document.getElementsByClassName("text")) {
+        elem.style.visibility = "hidden"
+    }
+
 
     // ************** Generate the tree diagram      *****************
     var margin = {top: 20, right: 120, bottom: 20, left: 120},
@@ -451,6 +485,3 @@ function repaint(view) {
 
 // Define the endpoint and the connection handler
 config();
-
-// When everything loads paint something
-document.onload = init;
