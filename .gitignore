@@ -1,0 +1,7 @@
+# Wirecloud stuff
+*.wgt
+
+# Emacs stuff
+\#*\#
+*~
+.#*
