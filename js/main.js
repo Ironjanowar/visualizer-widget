@@ -190,12 +190,12 @@ function web_view() {
         var setEvents = images
         // Append hero text
 
-	// Not used heather
-//            .on( 'click', function (d) {
-//                d3.select("h1").html(d.last_name);
-//                d3.select("h2").html(d.name);
-//                d3.select("h3").html ("Take me to " + "<a href='" + d.link + "' >"  + d.last_name + " web page ⇢"+ "</a>" );
-//            })
+        // Not used heather
+        //            .on( 'click', function (d) {
+        //                d3.select("h1").html(d.last_name);
+        //                d3.select("h2").html(d.name);
+        //                d3.select("h3").html ("Take me to " + "<a href='" + d.link + "' >"  + d.last_name + " web page ⇢"+ "</a>" );
+        //            })
 
             .on( 'mouseenter', function() {
                 // select element in current context
@@ -322,16 +322,88 @@ function web_view() {
 };
 
 // Paints the tree view with the json information
-// TODO: Fix display
+// TODO
 function tree_view() {
-    var treeData = dataSet;
+    var margin = {top: 40, right: 120, bottom: 20, left: 120},
+        width = 960 - margin.right - margin.left,
+        height = 500 - margin.top - margin.bottom;
 
-    // Set visible the text
-    for (var elem of document.getElementsByClassName("text")) {
-        elem.style.visibility = "hidden"
+    var i = 0,
+	duration = 700;
+
+    var tree = d3.layout.tree()
+                 .size([height, width]);
+
+    var diagonal = d3.svg.diagonal()
+                     .projection(function(d) { return [d.x, d.y]; });
+
+    var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    root = dataSet;
+
+    update(root);
+
+    function update(source) {
+
+        // Compute the new tree layout.
+        var nodes = tree.nodes(root).reverse(),
+            links = tree.links(nodes);
+
+        // Normalize for fixed-depth.
+        nodes.forEach(function(d) { d.y = d.depth * 100; });
+
+        // Declare the nodes…
+        var node = svg.selectAll("g.node")
+                      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+        // Enter the nodes.
+        var nodeEnter = node.enter().append("g")
+                            .attr("class", "node")
+                            .attr("transform", function(d) {
+                                return "translate(" + d.x + "," + d.y + ")"; });
+
+        nodeEnter.append("circle")
+		 .attr("class", (d) => {
+		     return d.img ? "image" : "invisible" })
+                 .attr("r", 10)
+                 .style("fill", "#fff");
+
+        nodeEnter.append("svg:image")
+                 .attr("xlink:href", (d) => { return d.img })
+                 .attr("x", -25)
+                 .attr("y", -25)
+                 .attr("height", (d) => { return d.img_h || 50 })
+                 .attr("width", (d) => { return d.img_w || 50 })
+
+        nodeEnter.append("text")
+                 .attr("x", (d) => {
+                     return d.children || d._children ? 40 : 0; })
+                 .attr("y", (d) => {
+                     return d.children || d._children ? 0 : 28; })
+                 .attr("dy", ".35em")
+                 .attr("text-anchor", (d) => {
+                     return d.children || d._children ? "start" : "middle"})
+                 .text(function(d) { return d.name; })
+                 .style("fill-opacity", 1);
+
+        // Declare the links…
+        var link = svg.selectAll("path.link")
+                      .data(links, function(d) { return d.target.id; });
+
+        // Enter the links.
+        link.enter().insert("path", "g")
+            .attr("class", "link")
+            .attr("d", diagonal);
     }
+};
 
-
+// Paints the tree view with the json information
+// TODO: Fix display
+function old_tree_view() {
     // ************** Generate the tree diagram      *****************
     var margin = {top: 20, right: 120, bottom: 20, left: 120},
         width = 960 - margin.right - margin.left,
@@ -353,7 +425,7 @@ function tree_view() {
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    root = treeData;
+    root = dataSet;
     root.x0 = height / 2;
     root.y0 = 0;
 

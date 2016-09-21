@@ -17,26 +17,6 @@
     display: none;
   }
 
-  h1 {
-    font-size: 36px;
-    margin: 10px 0;
-    text-transform: uppercase;
-    font-weight: normal;
-  }
-
-  h2, h3 {
-    font-size: 18px;
-    margin: 5px 0;
-    font-weight: normal;
-  }
-
-  header {
-    padding: 20px;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
   a:link {
     color: #EE3124;
     text-decoration: none;
@@ -57,4 +37,21 @@
 
   .text {
     visibility: hidden;
+  }
+
+  .node circle {
+    stroke: steelblue;
+    stroke-width: 3px;
+  }
+
+  .node circle.image {
+    stroke-width: 0px;
+  }
+
+  .node text { font: 12px sans-serif; }
+
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
   }
